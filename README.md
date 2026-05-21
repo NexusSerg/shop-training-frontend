@@ -41,8 +41,8 @@ Each step fills in the stubs scaffolded in this repo:
 | Step | File(s) | Goal |
 |------|---------|------|
 | **2.1** ✅ | This scaffold | Next.js app + all stubs |
-| **2.2** | `src/lib/api.ts` | API Client wiring (already done) |
-| **2.3** | `app/(catalog)/search/`, `components/catalog/` | SSR search page + ProductGrid/Card |
+| **2.2** ✅ | `src/lib/api.ts` | API Client wiring (already done) |
+| **2.3** ✅ | `app/(catalog)/search/`, `components/catalog/` | SSR search page + ProductGrid/Card |
 | **2.4** | `src/lib/queryBuilder.ts`, `hooks/useSearch.ts` | Full URL state sync |
 | **2.5** | `src/components/filters/` | All filter components |
 | **2.6** | `src/components/search/` | Debounced autocomplete |
