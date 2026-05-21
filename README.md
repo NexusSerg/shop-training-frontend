@@ -31,7 +31,7 @@ docker compose -f infra/docker-compose.yml up -d
 pnpm dev
 
 # 4. Start frontend
-npm run dev        # → http://localhost:3001
+npm run dev        # → http://localhost:4000
 ```
 
 ## Phase 2 — Step-by-Step Implementation
