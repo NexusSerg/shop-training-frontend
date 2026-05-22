@@ -1,5 +1,4 @@
 'use client';
-// TODO Step 2.4 / saved-search: load and save search/filter combinations
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import type { CreateSavedSearchRequest } from '@nexusserg/api-client';

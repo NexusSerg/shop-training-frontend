@@ -1,10 +1,10 @@
 'use client';
-// TODO Step 2.4: replace stub state with URL-synced state
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { SearchResponse, ProductSummary } from '@nexusserg/api-client';
+import type { SearchResponse } from '@nexusserg/api-client';
 import type { SearchState } from '@/lib/queryBuilder';
 import { apiClient } from '@/lib/api';
+import { useSearchStateSync } from '@/hooks/useSearchStateSync';
 import { ProductGrid } from '@/components/catalog/ProductGrid';
 import { FilterPanel } from '@/components/filters/FilterPanel';
 import { SortSelect } from '@/components/sorting/SortSelect';
@@ -15,11 +15,13 @@ import { QuickView } from '@/components/catalog/QuickView';
 
 interface SearchResultsProps {
   initialData: SearchResponse | null;
+  /** Passed from the server component for TanStack Query hydration only. */
   initialState: SearchState;
 }
 
-export function SearchResults({ initialData, initialState }: SearchResultsProps) {
-  const [state, setState] = useState(initialState);
+export function SearchResults({ initialData }: SearchResultsProps) {
+  // URL is single source of truth — all state changes push a new history entry
+  const { state, updateState } = useSearchStateSync();
   const [quickViewId, setQuickViewId] = useState<string | null>(null);
 
   const { data, isFetching } = useQuery({
@@ -27,6 +29,17 @@ export function SearchResults({ initialData, initialState }: SearchResultsProps)
     queryFn: () =>
       apiClient.search({
         q: state.query,
+        brands: state.filters.brands.length ? state.filters.brands : undefined,
+        priceMin: state.filters.priceRange?.[0],
+        priceMax: state.filters.priceRange?.[1],
+        rating: state.filters.rating ?? undefined,
+        categoryPath: state.filters.categoryPath.length
+          ? state.filters.categoryPath
+          : undefined,
+        attributes: Object.keys(state.filters.attributes).length
+          ? state.filters.attributes
+          : undefined,
+        inStockOnly: state.filters.inStockOnly || undefined,
         sort: state.sort,
         page: state.page,
         perPage: state.perPage,
@@ -35,7 +48,7 @@ export function SearchResults({ initialData, initialState }: SearchResultsProps)
     staleTime: 10_000,
   });
 
-  const totalPages = data ? Math.ceil(data.pagination.total / state.perPage) : 0;
+  const totalPages = data?.pagination.totalPages ?? 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -55,11 +68,11 @@ export function SearchResults({ initialData, initialState }: SearchResultsProps)
             <div className="flex items-center gap-3">
               <SortSelect
                 value={state.sort}
-                onChange={(sort) => setState({ ...state, sort, page: 1 })}
+                onChange={(sort) => updateState({ sort, page: 1 })}
               />
               <ProductsPerPage
                 value={state.perPage}
-                onChange={(perPage) => setState({ ...state, perPage, page: 1 })}
+                onChange={(perPage) => updateState({ perPage, page: 1 })}
               />
             </div>
           </div>
@@ -73,7 +86,7 @@ export function SearchResults({ initialData, initialState }: SearchResultsProps)
           <Pagination
             page={state.page}
             totalPages={totalPages}
-            onPageChange={(page) => setState({ ...state, page })}
+            onPageChange={(page) => updateState({ page })}
           />
         </div>
       </div>

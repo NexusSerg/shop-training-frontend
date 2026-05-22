@@ -1,19 +1,27 @@
 'use client';
-// TODO Step 2.4: add full URL sync (brands, price, rating, attributes filters)
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import { parseSearchParams } from '@/lib/queryBuilder';
-import { useSearchParams } from 'next/navigation';
+import { useSearchStateSync } from '@/hooks/useSearchStateSync';
 
 export function useSearch() {
-  const params = useSearchParams();
-  const state = parseSearchParams(params);
+  const { state, updateState, updateFilters, resetPage } = useSearchStateSync();
 
   const query = useQuery({
     queryKey: ['search', state],
     queryFn: () =>
       apiClient.search({
         q: state.query,
+        brands: state.filters.brands.length ? state.filters.brands : undefined,
+        priceMin: state.filters.priceRange?.[0],
+        priceMax: state.filters.priceRange?.[1],
+        rating: state.filters.rating ?? undefined,
+        categoryPath: state.filters.categoryPath.length
+          ? state.filters.categoryPath
+          : undefined,
+        attributes: Object.keys(state.filters.attributes).length
+          ? state.filters.attributes
+          : undefined,
+        inStockOnly: state.filters.inStockOnly || undefined,
         sort: state.sort,
         page: state.page,
         perPage: state.perPage,
@@ -22,5 +30,5 @@ export function useSearch() {
     staleTime: 10_000,
   });
 
-  return { state, ...query };
+  return { state, updateState, updateFilters, resetPage, ...query };
 }

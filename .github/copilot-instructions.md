@@ -908,3 +908,8 @@ Each step is a PR: Small, reviewable, independently deployable
 Tests at every step: Unit tests for logic, integration tests for endpoints, E2E for flows
 Stub before integrate: Get the contract right before connecting real systems
 Update readme.md each phase if it's a significant changes
+
+Coding Conventions
+Step references belong only in TODO comments for unfinished work: `// TODO Step X.Y: description`
+Never put step numbers in JSDoc, production comments, or any code that is not a TODO marker
+When a step is completed, remove its TODO comments from the code entirely — do not convert them to regular comments
