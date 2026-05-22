@@ -1,5 +1,5 @@
 'use client';
-// TODO Step 2.3 / 2.4: implement search query management with URL sync
+// TODO Step 2.4: add full URL sync (brands, price, rating, attributes filters)
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
 import { parseSearchParams } from '@/lib/queryBuilder';

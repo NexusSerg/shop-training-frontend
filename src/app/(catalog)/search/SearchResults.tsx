@@ -1,5 +1,4 @@
 'use client';
-// TODO Step 2.3: full client-side search results with filter panel + grid
 // TODO Step 2.4: replace stub state with URL-synced state
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
