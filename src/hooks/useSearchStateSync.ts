@@ -9,7 +9,7 @@ import {
 } from '@/lib/queryBuilder';
 
 /**
- * Step 2.4 — URL is single source of truth for search state.
+ * URL is single source of truth for search state.
  *
  * Reading: URL params are parsed into SearchState on every render.
  * Writing: state updates are pushed as a new history entry so that

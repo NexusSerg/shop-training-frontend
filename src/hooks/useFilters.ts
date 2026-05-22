@@ -1,4 +1,6 @@
 'use client';
+// TODO Step 2.5: wire filter UI components (BrandFilter, PriceRangeSlider, RatingFilter,
+// CategoryTree, AttributeFilter, ActiveFilters) to call setFilters/resetFilters from this hook
 import { useSearchStateSync } from '@/hooks/useSearchStateSync';
 import type { SearchFilters } from '@/lib/queryBuilder';
 
