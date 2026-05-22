@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
-    "@nexusserg/api-client": "file:../shop-training-backend/packages/api-client",
+    "@nexusserg/api-client": "^0.1.1",
     "@radix-ui/react-label": "^2.1.8",
     "@tanstack/react-query": "^5.100.11",
     "@tanstack/react-query-devtools": "^5.100.11",

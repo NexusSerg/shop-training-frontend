@@ -41,8 +41,8 @@ Each step fills in the stubs scaffolded in this repo:
 | Step | File(s) | Goal |
 |------|---------|------|
 | **2.1** ✅ | This scaffold | Next.js app + all stubs |
-| **2.2** | `src/lib/api.ts` | API Client wiring (already done) |
-| **2.3** | `app/(catalog)/search/`, `components/catalog/` | SSR search page + ProductGrid/Card |
+| **2.2** ✅ | `src/lib/api.ts` | API Client wiring (already done) |
+| **2.3** ✅ | `app/(catalog)/search/`, `components/catalog/` | SSR search page + ProductGrid/Card |
 | **2.4** | `src/lib/queryBuilder.ts`, `hooks/useSearch.ts` | Full URL state sync |
 | **2.5** | `src/components/filters/` | All filter components |
 | **2.6** | `src/components/search/` | Debounced autocomplete |
@@ -78,15 +78,35 @@ src/
 
 ## API Client
 
-The `@nexusserg/api-client` package is linked locally from `../shop-training-backend/packages/api-client`.
-Once the backend publishes `api-client/v0.1.0` to GitHub Packages, update `package.json`:
+This app consumes @nexusserg/api-client from GitHub Packages.
+
+1. Ensure .npmrc exists in the repo root:
+
+```ini
+@nexusserg:registry=https://npm.pkg.github.com
+always-auth=true
+//npm.pkg.github.com/:_authToken=${NEXUSSERG_PACKAGES_TOKEN}
+```
+
+2. Ensure dependency in package.json points to a published version:
 
 ```json
 "@nexusserg/api-client": "^0.1.0"
 ```
 
-And add to `.npmrc`:
+3. Install with a token that has read:packages access:
+
+```bash
+export NEXUSSERG_PACKAGES_TOKEN=YOUR_GITHUB_TOKEN
+npm install
 ```
-@nexusserg:registry=https://npm.pkg.github.com
-//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
-```
+
+### GitHub Actions CI
+
+This repo includes [ci.yml](.github/workflows/ci.yml) to run install + build on push/PR.
+
+Required repository secret:
+
+1. `NEXUSSERG_PACKAGES_TOKEN`: GitHub token with `read:packages` (and repo read access if required by package visibility settings).
+
+CI maps this secret to `NEXUSSERG_PACKAGES_TOKEN` during `npm ci` so npm can install @nexusserg scoped packages from GitHub Packages.

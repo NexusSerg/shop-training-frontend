@@ -1,0 +1,33 @@
+name: Frontend CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@nexusserg"
+
+      - name: Install dependencies
+        env:
+          NEXUSSERG_PACKAGES_TOKEN: ${{ secrets.NEXUSSERG_PACKAGES_TOKEN }}
+        run: npm ci
+
+      - name: Build
+        run: npm run build
