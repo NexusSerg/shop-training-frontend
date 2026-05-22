@@ -1,4 +1,5 @@
 // SSR product listing page
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { apiClient } from '@/lib/api';
 import { ProductGrid } from '@/components/catalog/ProductGrid';
@@ -15,7 +16,9 @@ export default async function ProductsPage() {
   return (
     <main className="container mx-auto px-4 py-6">
       <div className="mb-6">
-        <SearchBar />
+        <Suspense fallback={null}>
+          <SearchBar />
+        </Suspense>
       </div>
       <h1 className="text-2xl font-bold mb-4">All Products</h1>
       {data && (
