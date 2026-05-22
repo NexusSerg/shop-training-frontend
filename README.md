@@ -43,11 +43,11 @@ Each step fills in the stubs scaffolded in this repo:
 | **2.1** ✅ | This scaffold | Next.js app + all stubs |
 | **2.2** ✅ | `src/lib/api.ts` | API Client wiring (already done) |
 | **2.3** ✅ | `app/(catalog)/search/`, `components/catalog/` | SSR search page + ProductGrid/Card |
-| **2.4** | `src/lib/queryBuilder.ts`, `hooks/useSearch.ts` | Full URL state sync |
-| **2.5** | `src/components/filters/` | All filter components |
-| **2.6** | `src/components/search/` | Debounced autocomplete |
-| **2.7** | `src/components/catalog/Pagination/` | Pagination + infinite scroll |
-| **2.8** | `src/components/catalog/QuickView/` | Quick view modal |
+| **2.4** ✅| `src/lib/queryBuilder.ts`, `hooks/useSearch.ts` | Full URL state sync |
+| **2.5** ✅| `src/components/filters/` | All filter components |
+| **2.6** ✅| `src/components/search/` | Debounced autocomplete |
+| **2.7** ✅| `src/components/catalog/Pagination/` | Pagination + infinite scroll |
+| **2.8** ✅| `src/components/catalog/QuickView/` | Quick view modal |
 | **2.9** | `src/components/sorting/SortSelect/` | Sort dropdown → URL |
 | **2.10** | `src/lib/seoHelpers.ts`, page metadata | JSON-LD, robots, OG tags |
 
