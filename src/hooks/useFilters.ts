@@ -1,8 +1,28 @@
 'use client';
-// TODO Step 2.5: full filter state sync with URL
-import { useFilterStore } from '@/store/filterSlice';
+import { useSearchStateSync } from '@/hooks/useSearchStateSync';
+import type { SearchFilters } from '@/lib/queryBuilder';
 
+/**
+ * Read/write filter state via URL.
+ * Changing any filter resets pagination to page 1.
+ */
 export function useFilters() {
-  const { filters, setFilters, resetFilters } = useFilterStore();
-  return { filters, setFilters, resetFilters };
+  const { state, updateFilters } = useSearchStateSync();
+
+  function setFilters(partial: Partial<SearchFilters>) {
+    updateFilters(partial);
+  }
+
+  function resetFilters() {
+    updateFilters({
+      brands: [],
+      priceRange: null,
+      rating: null,
+      categoryPath: [],
+      attributes: {},
+      inStockOnly: false,
+    });
+  }
+
+  return { filters: state.filters, setFilters, resetFilters };
 }
