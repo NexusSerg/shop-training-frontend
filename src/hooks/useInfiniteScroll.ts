@@ -1,5 +1,4 @@
 'use client';
-// TODO Step 2.7: implement IntersectionObserver-based infinite scroll
 import { useEffect, useRef, useCallback } from 'react';
 
 export function useInfiniteScroll(onLoadMore: () => void, enabled = true) {
