@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { LayoutList, GalleryVertical } from 'lucide-react';
 import type { SearchResponse, ProductSummary } from '@nexusserg/api-client';
@@ -27,7 +28,27 @@ interface SearchResultsProps {
 export function SearchResults({ initialData }: SearchResultsProps) {
   // URL is single source of truth — all state changes push a new history entry
   const { state, updateState } = useSearchStateSync();
-  const [quickViewId, setQuickViewId] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // ?quickview=productId — deep-linkable quick view state
+  const quickViewId = searchParams.get('quickview');
+
+  const openQuickView = useCallback(
+    (id: string) => {
+      const next = new URLSearchParams(searchParams.toString());
+      next.set('quickview', id);
+      router.push(`${pathname}?${next.toString()}`, { scroll: false });
+    },
+    [searchParams, pathname, router],
+  );
+
+  const closeQuickView = useCallback(() => {
+    const next = new URLSearchParams(searchParams.toString());
+    next.delete('quickview');
+    router.push(`${pathname}?${next.toString()}`, { scroll: false });
+  }, [searchParams, pathname, router]);
 
   // ── Scroll mode preference (localStorage) ──────────────────────────────
   const [scrollMode, setScrollMode] = useState<ScrollMode>('pagination');
@@ -177,7 +198,7 @@ export function SearchResults({ initialData }: SearchResultsProps) {
           <ProductGrid
             products={displayedProducts}
             isLoading={isFetching && displayedProducts.length === 0}
-            onQuickView={setQuickViewId}
+            onQuickView={openQuickView}
           />
 
           {scrollMode === 'pagination' ? (
@@ -196,7 +217,7 @@ export function SearchResults({ initialData }: SearchResultsProps) {
         </div>
       </div>
 
-      <QuickView productId={quickViewId} onClose={() => setQuickViewId(null)} />
+      <QuickView productId={quickViewId} onClose={closeQuickView} />
     </div>
   );
 }
