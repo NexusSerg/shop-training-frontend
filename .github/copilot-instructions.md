@@ -913,3 +913,5 @@ Coding Conventions
 Step references belong only in TODO comments for unfinished work: `// TODO Step X.Y: description`
 Never put step numbers in JSDoc, production comments, or any code that is not a TODO marker
 When a step is completed, remove its TODO comments from the code entirely — do not convert them to regular comments
+
+## Always update readme.md according to changes made in the project
