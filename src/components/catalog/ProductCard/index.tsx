@@ -4,11 +4,13 @@ import Link from 'next/link';
 import { Star } from 'lucide-react';
 import type { ProductSummary } from '@nexusserg/api-client';
 import { Badge } from '@/components/ui/badge';
+import { trackProductClick } from '@/lib/searchAnalytics';
 
 interface ProductCardProps {
   product: ProductSummary;
   onQuickView?: (productId: string) => void;
   layout?: 'grid' | 'list';
+  position?: number;
 }
 
 function StarRating({ rating, count }: { rating: number; count: number }) {
@@ -26,7 +28,7 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
   );
 }
 
-export function ProductCard({ product, onQuickView, layout = 'grid' }: ProductCardProps) {
+export function ProductCard({ product, onQuickView, layout = 'grid', position = 0 }: ProductCardProps) {
   const hasDiscount = product.discountPercentage > 0;
   const imgSrc = product.primaryImage?.url ?? null;
 
@@ -58,6 +60,7 @@ export function ProductCard({ product, onQuickView, layout = 'grid' }: ProductCa
       <Link
         href={`/products/${product.slug}`}
         className="font-medium text-sm line-clamp-2 hover:text-blue-600 transition-colors"
+        onClick={() => trackProductClick(product.id, position)}
       >
         {product.name}
       </Link>

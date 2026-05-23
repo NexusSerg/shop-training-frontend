@@ -1,5 +1,4 @@
 'use client';
-// TODO Step 2.9: write selected sort to URL &sort=
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { SortOption } from '@/lib/queryBuilder';
 

@@ -1,13 +1,23 @@
-// TODO Step 2.10: track search events (query, filter, click-through)
-
-export function trackSearch(_query: string, _resultCount: number): void {
-  // TODO Step 2.10
+declare global {
+  interface Window {
+    dataLayer?: Record<string, unknown>[];
+  }
 }
 
-export function trackFilterChange(_filterKey: string, _value: unknown): void {
-  // TODO Step 2.10
+function push(event: Record<string, unknown>): void {
+  if (typeof window === 'undefined') return;
+  window.dataLayer = window.dataLayer ?? [];
+  window.dataLayer.push(event);
 }
 
-export function trackProductClick(_productId: string, _position: number): void {
-  // TODO Step 2.10
+export function trackSearch(query: string, resultCount: number): void {
+  push({ event: 'search', search_term: query, result_count: resultCount });
+}
+
+export function trackFilterChange(filterKey: string, value: unknown): void {
+  push({ event: 'filter_change', filter_key: filterKey, filter_value: value });
+}
+
+export function trackProductClick(productId: string, position: number): void {
+  push({ event: 'product_click', product_id: productId, position });
 }
