@@ -209,17 +209,13 @@ src/
 | 2.5 Filter panel | ✅ Done | `src/components/filters/` | All filter components wired |
 | 2.6 Debounced autocomplete | ✅ Done | `src/components/search/` | 150ms debounce, keyboard nav |
 | 2.7 Pagination + infinite scroll | ✅ Done | `src/components/catalog/Pagination/`, `InfiniteScroll/` | Mode toggle + localStorage |
-| 2.8 Quick view modal | ⚠️ Partial | `src/components/catalog/QuickView/index.tsx` | Dialog opens, product name/description shown; full detail layout and pricing display pending |
+| 2.8 Quick view modal | ✅ Done | `src/components/catalog/QuickView/index.tsx` | Dialog with image, pricing (`apiClient.getPricing()`), description, attributes; `?quickview=id` synced to URL in SearchResults |
 | 2.9 Sort dropdown | ✅ Done | `src/components/sorting/SortSelect/index.tsx` | Controlled component; sort written to `&sort=` URL param via `useSearchStateSync` in SearchResults |
 | 2.10 SEO / JSON-LD / analytics | ✅ Done | `src/lib/seoHelpers.ts`, `src/lib/searchAnalytics.ts` | `buildProductJsonLd` (Schema.org Product + AggregateOffer), `buildBreadcrumbJsonLd` (BreadcrumbList), OG/Twitter meta + canonical in product detail and search pages; analytics via `window.dataLayer` (GTM-compatible) |
 
 ## Open TODOs
 
-These are the remaining `// TODO Step X.Y:` markers that need implementation:
-
-| File | Step | What to implement |
-|------|------|-------------------|
-| [src/components/catalog/QuickView/index.tsx](src/components/catalog/QuickView/index.tsx) | 2.8 | Full product detail layout inside the dialog (images, attributes, seller offers); fetch and display pricing via `apiClient.getPricing()`; sync `?quickview=id` into the URL |
+All Phase 2 steps are complete. No outstanding TODO markers remain.
 
 ## Coding Conventions
 

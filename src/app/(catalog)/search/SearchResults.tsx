@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { LayoutList, GalleryVertical } from 'lucide-react';
 import type { SearchResponse, ProductSummary } from '@nexusserg/api-client';
@@ -28,7 +29,28 @@ interface SearchResultsProps {
 export function SearchResults({ initialData }: SearchResultsProps) {
   // URL is single source of truth — all state changes push a new history entry
   const { state, updateState } = useSearchStateSync();
-  const [quickViewId, setQuickViewId] = useState<string | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const rawParams = useSearchParams();
+
+  // quickview state — synced to ?quickview=id in the URL for deep-linking
+  const [quickViewId, setQuickViewId] = useState<string | null>(
+    rawParams.get('quickview'),
+  );
+
+  function openQuickView(id: string) {
+    setQuickViewId(id);
+    const next = new URLSearchParams(rawParams.toString());
+    next.set('quickview', id);
+    router.push(`${pathname}?${next.toString()}`, { scroll: false });
+  }
+
+  function closeQuickView() {
+    setQuickViewId(null);
+    const next = new URLSearchParams(rawParams.toString());
+    next.delete('quickview');
+    router.push(`${pathname}?${next.toString()}`, { scroll: false });
+  }
 
   // ── Scroll mode preference (localStorage) ──────────────────────────────
   const [scrollMode, setScrollMode] = useState<ScrollMode>('pagination');
@@ -206,7 +228,7 @@ export function SearchResults({ initialData }: SearchResultsProps) {
           <ProductGrid
             products={displayedProducts}
             isLoading={isFetching && displayedProducts.length === 0}
-            onQuickView={setQuickViewId}
+            onQuickView={openQuickView}
           />
 
           {scrollMode === 'pagination' ? (
@@ -225,7 +247,7 @@ export function SearchResults({ initialData }: SearchResultsProps) {
         </div>
       </div>
 
-      <QuickView productId={quickViewId} onClose={() => setQuickViewId(null)} />
+      <QuickView productId={quickViewId} onClose={closeQuickView} />
     </div>
   );
 }

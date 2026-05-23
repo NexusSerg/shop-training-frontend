@@ -56,6 +56,7 @@ const RESERVED_PARAMS = new Set([
   'q', 'sort', 'page', 'per_page',
   'brands', 'price_min', 'price_max',
   'rating', 'category', 'in_stock',
+  'quickview',
 ]);
 
 /** Parse URLSearchParams → SearchState */
