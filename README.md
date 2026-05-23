@@ -210,8 +210,8 @@ src/
 | 2.6 Debounced autocomplete | ✅ Done | `src/components/search/` | 150ms debounce, keyboard nav |
 | 2.7 Pagination + infinite scroll | ✅ Done | `src/components/catalog/Pagination/`, `InfiniteScroll/` | Mode toggle + localStorage |
 | 2.8 Quick view modal | ⚠️ Partial | `src/components/catalog/QuickView/index.tsx` | Dialog opens, product name/description shown; full detail layout and pricing display pending |
-| 2.9 Sort dropdown | ⚠️ Partial | `src/components/sorting/SortSelect/index.tsx` | Component built; TODO comment remains but sort is already wired via URL in SearchResults |
-| 2.10 SEO / JSON-LD / analytics | ⚠️ Partial | `src/lib/seoHelpers.ts`, `src/lib/searchAnalytics.ts` | `buildCanonicalUrl` works; JSON-LD builders and analytics tracking are stubs |
+| 2.9 Sort dropdown | ✅ Done | `src/components/sorting/SortSelect/index.tsx` | Controlled component; sort written to `&sort=` URL param via `useSearchStateSync` in SearchResults |
+| 2.10 SEO / JSON-LD / analytics | ✅ Done | `src/lib/seoHelpers.ts`, `src/lib/searchAnalytics.ts` | `buildProductJsonLd` (Schema.org Product + AggregateOffer), `buildBreadcrumbJsonLd` (BreadcrumbList), OG/Twitter meta + canonical in product detail and search pages; analytics via `window.dataLayer` (GTM-compatible) |
 
 ## Open TODOs
 
@@ -220,8 +220,6 @@ These are the remaining `// TODO Step X.Y:` markers that need implementation:
 | File | Step | What to implement |
 |------|------|-------------------|
 | [src/components/catalog/QuickView/index.tsx](src/components/catalog/QuickView/index.tsx) | 2.8 | Full product detail layout inside the dialog (images, attributes, seller offers); fetch and display pricing via `apiClient.getPricing()`; sync `?quickview=id` into the URL |
-| [src/lib/seoHelpers.ts](src/lib/seoHelpers.ts) | 2.10 | Implement `buildProductJsonLd` (Product schema) and `buildBreadcrumbJsonLd` (BreadcrumbList schema); inject `<script type="application/ld+json">` in product and search pages |
-| [src/lib/searchAnalytics.ts](src/lib/searchAnalytics.ts) | 2.10 | Implement `trackSearch`, `trackFilterChange`, `trackProductClick` (send to analytics endpoint or data layer) |
 
 ## Coding Conventions
 

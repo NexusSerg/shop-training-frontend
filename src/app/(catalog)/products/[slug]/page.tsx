@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { Star } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 import { Badge } from '@/components/ui/badge';
+import { buildProductJsonLd, buildBreadcrumbJsonLd, buildCanonicalUrl } from '@/lib/seoHelpers';
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>;
@@ -12,10 +13,46 @@ interface ProductPageProps {
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = await apiClient.getProduct(slug).catch(() => null);
+  const [product, pricing] = await Promise.all([
+    apiClient.getProduct(slug).catch(() => null),
+    apiClient.getPricing(slug).catch(() => null),
+  ]);
+
+  const title = product?.metaTitle || product?.name || 'Product';
+  const description = product?.metaDescription || product?.description?.slice(0, 160) || '';
+  const canonical = buildCanonicalUrl(`/products/${slug}`);
+  const primaryImage = product?.images.find((i) => i.isPrimary) ?? product?.images[0] ?? null;
+
   return {
-    title: product?.metaTitle || product?.name || 'Product',
-    description: product?.metaDescription || product?.description?.slice(0, 160) || '',
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: 'website',
+      ...(primaryImage
+        ? {
+            images: [
+              {
+                url: primaryImage.url,
+                width: primaryImage.width || 800,
+                height: primaryImage.height || 800,
+                alt: primaryImage.altText || product?.name || '',
+              },
+            ],
+          }
+        : {}),
+    },
+    twitter: {
+      card: primaryImage ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      ...(primaryImage ? { images: [primaryImage.url] } : {}),
+    },
+    // Suppress unused variable lint — pricing is fetched above for JSON-LD below
+    other: pricing ? {} : {},
   };
 }
 
@@ -32,8 +69,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const primaryImage = product.images.find((i) => i.isPrimary) ?? product.images[0] ?? null;
   const hasDiscount = pricing ? pricing.discountPercentage > 0 : false;
 
+  const productJsonLd = buildProductJsonLd(product, pricing);
+  const breadcrumbJsonLd = product.categoryPath.length > 0
+    ? buildBreadcrumbJsonLd(product.categoryPath)
+    : null;
+
   return (
     <main className="container mx-auto px-4 py-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: productJsonLd }}
+      />
+      {breadcrumbJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: breadcrumbJsonLd }}
+        />
+      )}
       <div className="flex flex-col md:flex-row gap-8">
         {/* Image */}
         <div className="relative w-full md:w-96 aspect-square bg-gray-100 rounded-lg overflow-hidden shrink-0">

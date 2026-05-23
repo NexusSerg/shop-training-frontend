@@ -54,14 +54,14 @@ export function ProductGrid({ products, isLoading, onQuickView }: ProductGridPro
 
       {layout === 'grid' ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} layout="grid" onQuickView={onQuickView} />
+          {products.map((p, i) => (
+            <ProductCard key={p.id} product={p} layout="grid" onQuickView={onQuickView} position={i} />
           ))}
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} layout="list" onQuickView={onQuickView} />
+          {products.map((p, i) => (
+            <ProductCard key={p.id} product={p} layout="list" onQuickView={onQuickView} position={i} />
           ))}
         </div>
       )}

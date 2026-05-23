@@ -14,6 +14,7 @@ import { InfiniteScroll } from '@/components/catalog/InfiniteScroll';
 import { ProductsPerPage, getPerPagePreference } from '@/components/catalog/ProductsPerPage';
 import { SearchBar } from '@/components/search/SearchBar';
 import { QuickView } from '@/components/catalog/QuickView';
+import { trackSearch, trackFilterChange } from '@/lib/searchAnalytics';
 
 const SCROLL_MODE_KEY = 'catalog:scrollMode';
 type ScrollMode = 'pagination' | 'infinite';
@@ -79,6 +80,34 @@ export function SearchResults({ initialData }: SearchResultsProps) {
   });
 
   const totalPages = data?.pagination.totalPages ?? 0;
+
+  // ── Analytics tracking ──────────────────────────────────────────────────
+  const prevQueryRef = useRef('');
+  const prevFiltersRef = useRef('');
+
+  useEffect(() => {
+    if (!data) return;
+    const queryChanged = prevQueryRef.current !== state.query;
+    if (queryChanged) {
+      trackSearch(state.query, data.pagination.total);
+      prevQueryRef.current = state.query;
+    }
+  }, [data, state.query]);
+
+  useEffect(() => {
+    const serialized = JSON.stringify(state.filters);
+    if (prevFiltersRef.current && prevFiltersRef.current !== serialized) {
+      const filters = state.filters;
+      if (filters.brands.length) trackFilterChange('brands', filters.brands);
+      if (filters.priceRange) trackFilterChange('priceRange', filters.priceRange);
+      if (filters.rating) trackFilterChange('rating', filters.rating);
+      if (filters.categoryPath.length) trackFilterChange('category', filters.categoryPath);
+      if (filters.inStockOnly) trackFilterChange('inStockOnly', true);
+      const attrKeys = Object.keys(filters.attributes);
+      attrKeys.forEach((key) => trackFilterChange(key, filters.attributes[key]));
+    }
+    prevFiltersRef.current = serialized;
+  }, [state.filters]);
 
   // ── Infinite scroll accumulation ───────────────────────────────────────
   const [accumulatedProducts, setAccumulatedProducts] = useState<ProductSummary[]>(

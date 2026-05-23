@@ -3,6 +3,7 @@
 import type { Metadata } from 'next';
 import { apiClient } from '@/lib/api';
 import { parseSearchParams } from '@/lib/queryBuilder';
+import { buildCanonicalUrl } from '@/lib/seoHelpers';
 import { SearchResults } from './SearchResults';
 
 interface SearchPageProps {
@@ -12,9 +13,25 @@ interface SearchPageProps {
 export async function generateMetadata({ searchParams }: SearchPageProps): Promise<Metadata> {
   const params = new URLSearchParams(await searchParams);
   const q = params.get('q') ?? '';
+  const title = q ? `"${q}" — Search Results` : 'Search Products';
+  const description = `Browse products${q ? ` matching "${q}"` : ''} with advanced filtering and sorting.`;
+  const canonical = buildCanonicalUrl(`/search?${params.toString()}`);
+
   return {
-    title: q ? `"${q}" — Search Results` : 'Search Products',
-    description: `Browse products${q ? ` matching "${q}"` : ''} with advanced filtering and sorting.`,
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+    },
   };
 }
 
