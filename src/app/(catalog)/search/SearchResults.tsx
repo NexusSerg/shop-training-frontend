@@ -6,7 +6,7 @@ import { LayoutList, GalleryVertical } from 'lucide-react';
 import type { SearchResponse, ProductSummary } from '@nexusserg/api-client';
 import type { SearchState } from '@/lib/queryBuilder';
 import { apiClient } from '@/lib/api';
-import { useSearchStateSync } from '@/hooks/useSearchStateSync';
+import { SearchStateProvider, useSearchStateSync } from '@/hooks/useSearchStateSync';
 import { ProductGrid } from '@/components/catalog/ProductGrid';
 import { FilterPanel } from '@/components/filters/FilterPanel';
 import { SortSelect } from '@/components/sorting/SortSelect';
@@ -22,12 +22,23 @@ type ScrollMode = 'pagination' | 'infinite';
 
 interface SearchResultsProps {
   initialData: SearchResponse | null;
-  /** Passed from the server component for TanStack Query hydration only. */
   initialState: SearchState;
 }
 
-export function SearchResults({ initialData }: SearchResultsProps) {
-  // URL is single source of truth — all state changes push a new history entry
+/**
+ * Thin shell: mounts the shared state provider so that SearchResultsContent
+ * and every filter component in the tree all read from the same useState.
+ */
+export function SearchResults(props: SearchResultsProps) {
+  return (
+    <SearchStateProvider>
+      <SearchResultsContent {...props} />
+    </SearchStateProvider>
+  );
+}
+
+function SearchResultsContent({ initialData, initialState }: SearchResultsProps) {
+  // Reads from SearchStateProvider — same instance used by all filter components.
   const { state, updateState } = useSearchStateSync();
   const router = useRouter();
   const pathname = usePathname();
@@ -97,7 +108,14 @@ export function SearchResults({ initialData }: SearchResultsProps) {
         page: state.page,
         perPage: state.perPage,
       }),
-    initialData: initialData ?? undefined,
+    // Only seed the cache with SSR data when the URL state exactly matches
+    // what the server fetched. Any filter/sort/page change produces a new
+    // queryKey for which there is no initialData, so TanStack Query fetches
+    // fresh results immediately instead of re-using the stale SSR payload.
+    initialData:
+      JSON.stringify(state) === JSON.stringify(initialState)
+        ? (initialData ?? undefined)
+        : undefined,
     staleTime: 10_000,
   });
 
